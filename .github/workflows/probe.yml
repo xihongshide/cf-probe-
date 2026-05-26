@@ -1,0 +1,28 @@
+name: cf-probe
+  on: workflow_dispatch
+  jobs:
+    probe:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Runner egress IP (confirm it's a datacenter / Azure IP)
+          run: curl -sS https://ipinfo.io/json || true
+
+        - name: Discovery endpoint 
+          run: |
+            echo "===== GET /.well-known/oauth-authorization-server ====="
+            curl -sS -i https://learn.launchfire.com/.well-known/oauth-authorization-server | head -40 || true
+
+        - name: Token endpoint (empty POST)
+          run: |
+            echo "===== POST /oauth/token ====="
+            curl -sS -i -X POST https://learn.launchfire.com/oauth/token | head -40 || true
+  
+        - name: Authorize endpoint
+          run: |
+            echo "===== GET /oauth/authorize ====="
+            curl -sS -i "https://learn.launchfire.com/oauth/authorize" | head -20 || true
+
+        - name: MCP protected-resource metadata
+          run: |
+            echo "===== GET mcp.lemonadelxp.com protected-resource ====="
+            curl -sS -i "https://mcp.lemonadelxp.com/.well-known/oauth-protected-resource/t/fk39fhfd/mcp" | head -30 || true
