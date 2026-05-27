@@ -2,19 +2,19 @@ name: cf-probe
 "on":
   workflow_dispatch:
 jobs:
-    probe:
-      runs-on: ubuntu-latest
-      steps:
-        - name: discovery chain from Azure (verbose)
-          run: |
-            echo "===== egress IP ====="; curl -sS https://ipinfo.io/org || true; echo
-            echo "===== 1. protected-resource metadata (mcp) ====="
-            curl -sS -i "https://mcp.lemonadelxp.com/.well-known/oauth-protected-resource/t/fk39fhfd/mcp" | head -25 || true
-            echo; echo "===== 2. AUTH-SERVER metadata (learn) — the one Copilot Studio reports failing ====="
-            curl -sS -i "https://learn.launchfire.com/.well-known/oauth-authorization-server" | head -25 || true
-            echo; echo "===== 3. DCR registration endpoint (learn) ====="
-            curl -sS -i -X POST "https://learn.launchfire.com/oauth/register" -H 'content-type: application/json' -d '{}' | head -25 || true
-            echo; echo "===== 4. MCP initialize POST ====="
-            curl -sS -i -X POST "https://mcp.lemonadelxp.com/t/fk39fhfd/mcp" \
-              -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
-              -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}}' | head -25 || true
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: discovery chain from Azure (verbose)
+        run: |
+          echo "===== egress IP ====="; curl -sS https://ipinfo.io/org || true; echo
+          echo "===== 1. protected-resource metadata (mcp) ====="
+          curl -sS -i "https://mcp.lemonadelxp.com/.well-known/oauth-protected-resource/t/fk39fhfd/mcp" | head -25 || true
+          echo; echo "===== 2. AUTH-SERVER metadata (learn) — the one Copilot Studio reports failing ====="
+          curl -sS -i "https://learn.launchfire.com/.well-known/oauth-authorization-server" | head -25 || true
+          echo; echo "===== 3. DCR registration endpoint (learn) ====="
+          curl -sS -i -X POST "https://learn.launchfire.com/oauth/register" -H 'content-type: application/json' -d '{}' | head -25 || true
+          echo; echo "===== 4. MCP initialize POST (mcp) ====="
+          curl -sS -i -X POST "https://mcp.lemonadelxp.com/t/fk39fhfd/mcp" \
+            -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}}' | head -25 || true
